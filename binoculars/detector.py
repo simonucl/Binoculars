@@ -31,19 +31,21 @@ class Binoculars(object):
                  use_bfloat16: bool = True,
                  max_token_observed: int = 512,
                  mode: str = "low-fpr",
+                 device_1: str = DEVICE_1,
+                 device_2: str = DEVICE_2,
                  ) -> None:
         assert_tokenizer_consistency(observer_name_or_path, performer_name_or_path)
 
         self.change_mode(mode)
         self.observer_model = AutoModelForCausalLM.from_pretrained(observer_name_or_path,
-                                                                   device_map={"": DEVICE_1},
+                                                                   device_map={"": device_1},
                                                                    trust_remote_code=True,
                                                                    torch_dtype=torch.bfloat16 if use_bfloat16
                                                                    else torch.float32,
                                                                    token=huggingface_config["TOKEN"]
                                                                    )
         self.performer_model = AutoModelForCausalLM.from_pretrained(performer_name_or_path,
-                                                                    device_map={"": DEVICE_2},
+                                                                    device_map={"": device_2},
                                                                     trust_remote_code=True,
                                                                     torch_dtype=torch.bfloat16 if use_bfloat16
                                                                     else torch.float32,
